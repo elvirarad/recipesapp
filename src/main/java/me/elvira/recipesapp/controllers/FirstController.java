@@ -11,11 +11,8 @@ public class FirstController {
     public String helloWord() {
         return "Hello, web";
     }
-
-    @RestController
-    public class Page {
-        @GetMapping("/info")
-        public String Info() {
+    @GetMapping("/info")
+    public String Info() {
             String name = "Колобок";
             String project = "Побег";
             LocalDate data = LocalDate.of(2023,3,12);
@@ -24,6 +21,5 @@ public class FirstController {
                     ", название проекта: " + project +
                     ", дата создания проекта: " + data +
                     ", описание проекта: " + infoProject;
-        }
     }
 }
