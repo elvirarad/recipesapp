@@ -8,6 +8,8 @@ import me.elvira.recipesapp.services.IngredientServices;
 import me.elvira.recipesapp.services.RecipesServices;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/ingredient")
 
@@ -16,6 +18,11 @@ public class IngredientController {
 
     public IngredientController(IngredientServices ingredientServices) {
         this.ingredientServices = ingredientServices;
+    }
+
+    @GetMapping
+    public List<Ingredient> getIngredients (){
+        return ingredientServices.getAllIngredients();
     }
 
     @GetMapping("/{id}")
@@ -28,6 +35,14 @@ public class IngredientController {
         return ingredientServices.addIngredient(ingredient);
     }
 
+    @PutMapping("/{id}")
+    public IngredientDTO editIngredient(@PathVariable("id") int id, @RequestBody Ingredient ingredient){
+        return ingredientServices.updateIngredient(id, ingredient);
+    }
 
+    @DeleteMapping("/id")
+    public IngredientDTO deleteIngredient(@PathVariable("id") int id){
+        return ingredientServices.deleteById(id);
+    }
 
 }

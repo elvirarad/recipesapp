@@ -39,6 +39,7 @@ public class RecipesServicesImpl implements RecipesServices {
 //          for (Map.Entry<Integer, Recipe> entry : recipes.entrySet()){
 //              allRecipes.add(RecipeDTO.from(entry.getKey(), entry.getValue()));
 //          }
+//        return allRecipes;
         return new ArrayList<>(recipes.values());
     }
 
