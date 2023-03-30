@@ -14,11 +14,11 @@ import java.util.Map;
 public class IngredientServicesImpl implements IngredientServices {
 
     private final Map<Integer, Ingredient> ingredients = new HashMap<>();
-    private static int Number = 0;
+    private static int number = 0;
 
     @Override
     public IngredientDTO addIngredient(Ingredient ingredient) {
-        int id = Number++;
+        int id = number++;
         ingredients.put(id, ingredient);
         return IngredientDTO.from(id, ingredient);
     }

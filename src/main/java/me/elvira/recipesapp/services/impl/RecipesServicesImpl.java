@@ -53,15 +53,6 @@ public class RecipesServicesImpl implements RecipesServices {
         return RecipeDTO.from(id, recipe);
         }
 
-//@Override
-//    public RecipeDTO editRecipe(int id, Recipe recipe){
-////        for (Recipe value : recipes.values()) {
-////        if (recipes.containsKey(id)){
-//            recipes.put(id, recipe);
-//            return RecipeDTO.from(id, recipe);
-//        }
-////    }return null;
-
     @Override
     public RecipeDTO deleteById(int id){
         Recipe existingRecipe = recipes.remove(id);
