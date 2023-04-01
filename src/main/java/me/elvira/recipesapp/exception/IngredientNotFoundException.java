@@ -1,4 +1,4 @@
-package me.elvira.recipesapp.services.impl;
+package me.elvira.recipesapp.exception;
 
 public class IngredientNotFoundException extends RuntimeException {
 }

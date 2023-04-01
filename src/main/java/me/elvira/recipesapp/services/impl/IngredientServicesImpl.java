@@ -1,6 +1,7 @@
 package me.elvira.recipesapp.services.impl;
 
 import me.elvira.recipesapp.dto.IngredientDTO;
+import me.elvira.recipesapp.exception.IngredientNotFoundException;
 import me.elvira.recipesapp.model.Ingredient;
 import me.elvira.recipesapp.services.IngredientServices;
 import org.springframework.stereotype.Service;

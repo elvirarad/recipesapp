@@ -4,6 +4,7 @@ import me.elvira.recipesapp.dto.RecipeDTO;
 import me.elvira.recipesapp.exception.RecipeNotFoundException;
 import me.elvira.recipesapp.model.Recipe;
 import me.elvira.recipesapp.services.RecipesServices;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class RecipesServicesImpl implements RecipesServices {
             return RecipeDTO.from(id, recipe);
         }
         return null;
+//        StringUtils.isBlank(recipe)
     }
 
     @Override
