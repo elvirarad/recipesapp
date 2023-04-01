@@ -27,10 +27,10 @@ public class IngredientServicesImpl implements IngredientServices {
     @Override
     public IngredientDTO getIngredient(int id) {
         Ingredient ingredient = ingredients.get(id);
-        if (ingredient != null) {
-            return IngredientDTO.from(id, ingredient);
+        if (ingredient == null) {
+            throw new IngredientNotFoundException();
         }
-        return null;
+        return IngredientDTO.from(id, ingredient);
     }
 
     @Override

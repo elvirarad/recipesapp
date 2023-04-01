@@ -27,10 +27,10 @@ public class RecipesServicesImpl implements RecipesServices {
     @Override
     public RecipeDTO getRecipe(int id) {
         Recipe recipe = recipes.get(id);
-        if (recipe != null) {
-            return RecipeDTO.from(id, recipe);
+        if (recipe == null) {
+            throw new RecipeNotFoundException();
         }
-        return null;
+        return RecipeDTO.from(id, recipe);
 //        StringUtils.isBlank(recipe)
     }
 
