@@ -1,0 +1,60 @@
+GET http://localhost:8080
+###
+GET http://localhost:8080/info
+###
+POST http://localhost:8080/recipe
+Content-Type: application/json
+
+{
+  "name": "Test4",
+  "cookingTime": 154,
+  "ingredients": [
+    {
+      "name": "test ingredients",
+      "quantity": 1,
+      "unit": "cup"
+    }
+  ],
+  "steps": [
+    "step 1",
+    "step 2",
+    "step 3"
+  ]
+}
+###
+GET http://localhost:8080/recipe/3
+###
+POST http://localhost:8080/ingredient
+Content-Type: application/json
+
+{
+"name": "Test ingradient3",
+"quantity": 2,
+"unit": "piace"
+}
+###
+GET http://localhost:8080/ingredient/0
+###
+GET http://localhost:8080/recipe
+###
+PUT http://localhost:8080/recipe/1
+Content-Type: application/json
+
+{
+  "name": "Test4",
+  "cookingTime": 25,
+  "ingredients": [
+    {
+      "name": "test ingredients",
+      "quantity": 1,
+      "unit": "cup"
+    }
+  ],
+  "steps": [
+    "step 1",
+    "step 2",
+    "step 3"
+  ]
+}
+###
+DELETE http://localhost:8080/recipe/155
