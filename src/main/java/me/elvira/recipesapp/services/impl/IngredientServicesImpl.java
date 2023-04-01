@@ -2,8 +2,10 @@ package me.elvira.recipesapp.services.impl;
 
 import me.elvira.recipesapp.dto.IngredientDTO;
 import me.elvira.recipesapp.exception.IngredientNotFoundException;
+import me.elvira.recipesapp.exception.IngredientValidationException;
 import me.elvira.recipesapp.model.Ingredient;
 import me.elvira.recipesapp.services.IngredientServices;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,10 +21,14 @@ public class IngredientServicesImpl implements IngredientServices {
 
     @Override
     public IngredientDTO addIngredient(Ingredient ingredient) {
+        if (StringUtils.isBlank(ingredient.getName())){
+            throw new IngredientValidationException();
+        }
         int id = number++;
         ingredients.put(id, ingredient);
         return IngredientDTO.from(id, ingredient);
     }
+
 
     @Override
     public IngredientDTO getIngredient(int id) {

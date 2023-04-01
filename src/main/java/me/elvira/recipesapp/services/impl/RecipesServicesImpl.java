@@ -2,6 +2,7 @@ package me.elvira.recipesapp.services.impl;
 
 import me.elvira.recipesapp.dto.RecipeDTO;
 import me.elvira.recipesapp.exception.RecipeNotFoundException;
+import me.elvira.recipesapp.exception.RecipeValidationException;
 import me.elvira.recipesapp.model.Recipe;
 import me.elvira.recipesapp.services.RecipesServices;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,9 @@ public class RecipesServicesImpl implements RecipesServices {
 
     @Override
     public RecipeDTO addRecipe(Recipe recipe) {
+        if (StringUtils.isBlank(recipe.getName())){
+            throw new RecipeValidationException();
+        }
         int id = recipeNumber++;
         recipes.put(id, recipe);
         return RecipeDTO.from(id, recipe);
