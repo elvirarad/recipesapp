@@ -1,23 +1,40 @@
 package me.elvira.recipesapp.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.elvira.recipesapp.dto.RecipeDTO;
 import me.elvira.recipesapp.exception.RecipeNotFoundException;
 import me.elvira.recipesapp.exception.RecipeValidationException;
 import me.elvira.recipesapp.model.Recipe;
+import me.elvira.recipesapp.services.FilesServicesRecipe;
 import me.elvira.recipesapp.services.RecipesServices;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 @Service
 public class RecipesServicesImpl implements RecipesServices {
-    private final Map<Integer, Recipe> recipes = new HashMap<>();
+
+    private final FilesServicesRecipe filesServicesRecipe;
+    private static TreeMap<Integer, Recipe> recipes = new TreeMap<>();
     private static int recipeNumber = 0;
 
+    public RecipesServicesImpl(FilesServicesRecipe filesServicesRecipe) {
+        this.filesServicesRecipe = filesServicesRecipe;
+    }
+
+
+    @PostConstruct
+    private void  init(){
+        try {
+            readFromFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public RecipeDTO addRecipe(Recipe recipe) {
         if (StringUtils.isBlank(recipe.getName())){
@@ -25,6 +42,7 @@ public class RecipesServicesImpl implements RecipesServices {
         }
         int id = recipeNumber++;
         recipes.put(id, recipe);
+        saveToFile();
         return RecipeDTO.from(id, recipe);
     }
 
@@ -56,16 +74,40 @@ public class RecipesServicesImpl implements RecipesServices {
             throw new RecipeNotFoundException();
         }
         recipes.put(id, recipe);
+        saveToFile();
         return RecipeDTO.from(id, recipe);
         }
 
     @Override
     public RecipeDTO deleteById(int id){
         Recipe existingRecipe = recipes.remove(id);
+        saveToFile();
         if (existingRecipe == null){
             throw new RecipeNotFoundException();
         }
         return RecipeDTO.from(id, existingRecipe);
     }
+
+    @Override
+    public void saveToFile(){
+        try {
+            String json = new ObjectMapper().writeValueAsString(recipes);
+            filesServicesRecipe.saveToFile(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void readFromFile(){
+        try {
+            String json = filesServicesRecipe.readFromFile();
+            recipes = new ObjectMapper().readValue(json, new TypeReference<TreeMap<Integer, Recipe>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
 

@@ -14,4 +14,8 @@ public interface IngredientServices {
     IngredientDTO updateIngredient(int id, Ingredient ingredient);
 
     IngredientDTO deleteById(int id);
+
+    void saveToFile();
+
+    void readFromFile();
 }
