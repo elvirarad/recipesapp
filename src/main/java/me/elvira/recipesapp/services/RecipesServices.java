@@ -17,5 +17,9 @@ public interface RecipesServices {
 
     RecipeDTO deleteById(int id);
 
+    void saveToFile();
+
+    void readFromFile();
+
 //    Recipe editRecipe(int id, Recipe recipe);
 }
