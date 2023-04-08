@@ -4,6 +4,7 @@ import me.elvira.recipesapp.services.FilesServicesIngredient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,5 +51,10 @@ public class FilesServicesIngredientImpl implements FilesServicesIngredient {
             e.printStackTrace();
             return false;
         }
+    }
+    @Override
+    public File getDataFile(){
+        // класс File несёт служебную информацию: размер, название ...
+        return new File(ingredientsFilePath + "/" + ingredientsFileName);
     }
 }

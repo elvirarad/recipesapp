@@ -1,5 +1,7 @@
 package me.elvira.recipesapp.services;
 
+import java.io.File;
+
 public interface FilesServicesIngredient {
 
     boolean saveToFile(String json);
@@ -7,4 +9,6 @@ public interface FilesServicesIngredient {
     String readFromFile();
 
     boolean cleanDataFile();
+
+    File getDataFile();
 }

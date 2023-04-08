@@ -1,14 +1,13 @@
 package me.elvira.recipesapp.services.impl;
 
-import me.elvira.recipesapp.services.FilesServicesIngredient;
 import me.elvira.recipesapp.services.FilesServicesRecipe;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 @Service
 public class FilesServicesRecipesImpl implements FilesServicesRecipe {
 
@@ -37,6 +36,12 @@ public class FilesServicesRecipesImpl implements FilesServicesRecipe {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public File getDataFile(){
+        // класс File несёт служебную информацию: размер, название ...
+        return new File(recipesFilePath + "/" + recipesFileName);
     }
 
     @Override
