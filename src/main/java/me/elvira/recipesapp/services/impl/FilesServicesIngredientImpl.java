@@ -1,10 +1,17 @@
 package me.elvira.recipesapp.services.impl;
 
 import me.elvira.recipesapp.services.FilesServicesIngredient;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +25,22 @@ public class FilesServicesIngredientImpl implements FilesServicesIngredient {
 
     @Value("ingredients.json")
     private String ingredientsFileName;
+
+    @Override
+    public ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file) {
+        cleanDataFile();
+        File dataFile = getDataFile();
+
+        try (FileOutputStream fos = new FileOutputStream(dataFile)){
+            IOUtils.copy(file.getInputStream(), fos);
+            return ResponseEntity.ok().build();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 
     @Override
     public boolean saveToFile(String json){
