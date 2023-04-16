@@ -39,7 +39,12 @@ public class FilesController {
     @PostMapping(value = "/importRecipes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "скачать из файла рецепты")
     public ResponseEntity<Void> uploadDataRecipeFile(@RequestParam MultipartFile file) {
-        return filesServicesRecipe.uploadDataFile(file);
+        filesServicesRecipe.uploadDataFile(file);
+        if (true) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
         //MultipartFile - данные о том, что б.загружено. Данные отправл-ся кусками (один из них - ф-л)
 

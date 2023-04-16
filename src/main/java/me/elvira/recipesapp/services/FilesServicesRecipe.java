@@ -18,7 +18,7 @@ public interface FilesServicesRecipe {
 
     ResponseEntity<InputStreamResource> downloadDataFile() throws FileNotFoundException;
 
-    ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file);
+    boolean uploadDataFile(MultipartFile file);
 
     boolean cleanDataFile();
 }

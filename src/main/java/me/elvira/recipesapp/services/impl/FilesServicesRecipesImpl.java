@@ -70,20 +70,18 @@ public class FilesServicesRecipesImpl implements FilesServicesRecipe {
     }
 
     @Override
-    public ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file) {
+    public boolean uploadDataFile(MultipartFile file) {
         //MultipartFile - данные о том, что б.загружено. Данные отправл-ся кусками (один из них - ф-л)
         cleanDataFile();
         File dataFile = getDataFile();
 
-        try (FileOutputStream fos = new FileOutputStream(dataFile)){
+        try (FileOutputStream fos = new FileOutputStream(dataFile)) {
             IOUtils.copy(file.getInputStream(), fos);
-            return ResponseEntity.ok().build();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            return true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
 
