@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public interface FilesServicesRecipe {
 
@@ -21,4 +23,8 @@ public interface FilesServicesRecipe {
     boolean uploadDataFile(MultipartFile file);
 
     boolean cleanDataFile();
+
+    ResponseEntity<Object> downloadTextDataFile();
+
+    Path createTempFile(String suffix);
 }

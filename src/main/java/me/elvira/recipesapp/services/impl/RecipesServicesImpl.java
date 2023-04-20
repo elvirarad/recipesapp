@@ -13,6 +13,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Service
@@ -109,5 +114,35 @@ public class RecipesServicesImpl implements RecipesServices {
         }
     }
 
-}
+    @Override
+    public Path createTextDataFile() throws IOException {
+        Path path = filesServicesRecipe.createTempFile("recipesDataFile");
+        for (Recipe recipe : recipes.values()) {
+            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                writer.append(recipe.getName()).append("\n \n").append("Время приготовления: ").append(String.valueOf(recipe.getCookingTime())).append(" minutes.").append("\n");
+                writer.append("\n");
+                writer.append("Ингредиенты: \n \n");
+                recipe.getIngredients().forEach(ingredient -> {
+                    try {
+                        writer.append(" - ").append(ingredient.getName()).append(" - ").append(String.valueOf(ingredient.getQuantity())).append(" ").append(ingredient.getUnit()).append("\n \n");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                writer.append("\n");
+                writer.append("Инструкция приготовления: \n \n");
+                recipe.getSteps().forEach(step -> {
+                    try {
+                        writer.append(" > ").append(step).append("\n \n");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                writer.append("\n \n");
+            }
+        }
+        return path;
+    }
 
+
+}

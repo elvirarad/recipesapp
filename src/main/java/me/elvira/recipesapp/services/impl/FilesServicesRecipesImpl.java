@@ -1,29 +1,35 @@
 package me.elvira.recipesapp.services.impl;
 
 import me.elvira.recipesapp.services.FilesServicesRecipe;
+import me.elvira.recipesapp.services.RecipesServices;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+
 @Service
 public class FilesServicesRecipesImpl implements FilesServicesRecipe {
 
+    private final RecipesServices recipesServices;
 
     @Value("${path.to.files.folder}")
     private String recipesFilePath;
 
     @Value("recipes.json")
     private String recipesFileName;
+
+    public FilesServicesRecipesImpl(RecipesServices recipesServices) {
+        this.recipesServices = recipesServices;
+    }
 
     @Override
     public boolean saveToFile(String json){
@@ -97,4 +103,35 @@ public class FilesServicesRecipesImpl implements FilesServicesRecipe {
             return false;
         }
     }
+
+    @Override
+    public ResponseEntity<Object> downloadTextDataFile() {
+        try {
+            Path path = recipesServices.createTextDataFile();
+            if (Files.size(path) == 0) {
+                return ResponseEntity.noContent().build();
+            }
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipesDataFile.txt\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
+        }
+    }
+
+
+
+    @Override
+    public Path createTempFile(String suffix) {
+        try {
+            return Files.createTempFile(Path.of(recipesFilePath), "tempFile", suffix);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

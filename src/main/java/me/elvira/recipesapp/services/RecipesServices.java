@@ -3,6 +3,8 @@ package me.elvira.recipesapp.services;
 import me.elvira.recipesapp.dto.RecipeDTO;
 import me.elvira.recipesapp.model.Recipe;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public interface RecipesServices {
@@ -20,6 +22,9 @@ public interface RecipesServices {
     void saveToFile();
 
     void readFromFile();
+
+    Path createTextDataFile() throws IOException;
+
 
 //    Recipe editRecipe(int id, Recipe recipe);
 }
