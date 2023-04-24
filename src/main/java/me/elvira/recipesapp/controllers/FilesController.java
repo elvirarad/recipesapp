@@ -12,14 +12,13 @@ import me.elvira.recipesapp.services.FilesServicesRecipe;
 import me.elvira.recipesapp.services.FilesServicesIngredient;
 import me.elvira.recipesapp.services.RecipesServices;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -63,86 +62,77 @@ public class FilesController {
     public ResponseEntity<Void> uploadDataIngredientsFile(@RequestParam MultipartFile file) {
         return filesServicesIngredient.uploadDataFile(file);}
 
-    @GetMapping("/export/text")
+    @GetMapping("/export/recipesTxt")
     @Operation(
-            summary = "Загрузка файла рецептов в текстовом формате",
-            description = "Скачать файл с рецептами"
+            summary = "Загрузка в файл рецептов из памяти",
+            description = "Скачать в файл рецепты в формате .txt"
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Файл успешно загружен",
-                    content = {
-                            @Content(
-                                    mediaType = "application/text-plain",
-                                    array = @ArraySchema(schema =
-                                    @Schema(implementation = Recipe.class))
-                            )
-                    }
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Ошибка параметров запроса",
-                    content = {
-                            @Content(
-                                    mediaType = "application/text-plain",
-                                    array = @ArraySchema(schema =
-                                    @Schema(implementation = Recipe.class))
-                            )
-                    }
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Неверный URL или нет такой операции в веб-приложении",
-                    content = {
-                            @Content(
-                                    mediaType = "application/text-plain",
-                                    array = @ArraySchema(schema =
-                                    @Schema(implementation = Recipe.class))
-                            )
-                    }
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Внутренняя ошибка сервера во время запроса",
-                    content = {
-                            @Content(
-                                    mediaType = "application/text-plain",
-                                    array = @ArraySchema(schema =
-                                    @Schema(implementation = Recipe.class))
-                            )
-                    }
-            ),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "В файле нет содержимого",
-                    content = {
-                            @Content(
-                                    mediaType = "application/text-plain",
-                                    array = @ArraySchema(schema =
-                                    @Schema(implementation = Recipe.class))
-                            )
-                    }
-            )
-    })
-
-    public ResponseEntity<Object> downloadTextDataFile() {
-        try {
-            Path path = recipesServices.createTextDataFile();
-            if (Files.size(path) == 0) {
-                return ResponseEntity.noContent().build();
-            }
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
-            return ResponseEntity.ok()
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .contentLength(Files.size(path))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipesDataFile.txt\"")
-                    .body(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(e.toString());
-        }
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Файл успешно загружен",
+//                    content = {
+//                            @Content(
+//                                    mediaType = "application/text-plain",
+//                                    array = @ArraySchema(schema =
+//                                    @Schema(implementation = Recipe.class))
+//                            )
+//                    }
+//            ),
+//            @ApiResponse(
+//                    responseCode = "400",
+//                    description = "Ошибка параметров запроса",
+//                    content = {
+//                            @Content(
+//                                    mediaType = "application/text-plain",
+//                                    array = @ArraySchema(schema =
+//                                    @Schema(implementation = Recipe.class))
+//                            )
+//                    }
+//            ),
+//
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "Неверный URL или нет такой операции в веб-приложении",
+//                    content = {
+//                            @Content(
+//                                    mediaType = "application/text-plain",
+//                                    array = @ArraySchema(schema =
+//                                    @Schema(implementation = Recipe.class))
+//                            )
+//                    }
+//            ),
+//            @ApiResponse(
+//                    responseCode = "500",
+//                    description = "Внутренняя ошибка сервера во время запроса",
+//                    content = {
+//                            @Content(
+//                                    mediaType = "application/text-plain",
+//                                    array = @ArraySchema(schema =
+//                                    @Schema(implementation = Recipe.class))
+//                            )
+//                    }
+//            ),
+//            @ApiResponse(
+//                    responseCode = "204",
+//                    description = "В файле нет содержимого",
+//                    content = {
+//                            @Content(
+//                                    mediaType = "application/text-plain",
+//                                    array = @ArraySchema(schema =
+//                                    @Schema(implementation = Recipe.class))
+//                            )
+//                    }
+//            )
+//    })
+    public void downloadRecipes(HttpServletResponse response) throws IOException {
+        ContentDisposition disposition = ContentDisposition.attachment()
+                .name("recipes.txt")
+                .build();
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, disposition.toString());
+        response.setContentType("text/plain");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        recipesServices.expertFileTxt(response.getWriter());
     }
 
 }

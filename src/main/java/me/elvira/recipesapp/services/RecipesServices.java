@@ -5,6 +5,7 @@ import me.elvira.recipesapp.model.Recipe;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -24,10 +25,5 @@ public interface RecipesServices {
 
     void readFromFile();
 
-    Path createTextDataFile() throws IOException;
-
-    ResponseEntity<Object> downloadTextDataFile();
-
-
-//    Recipe editRecipe(int id, Recipe recipe);
+    void expertFileTxt(PrintWriter writer) throws IOException;
 }

@@ -6,23 +6,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.elvira.recipesapp.dto.RecipeDTO;
 import me.elvira.recipesapp.exception.RecipeNotFoundException;
 import me.elvira.recipesapp.exception.RecipeValidationException;
+import me.elvira.recipesapp.model.Ingredient;
 import me.elvira.recipesapp.model.Recipe;
 import me.elvira.recipesapp.services.FilesServicesRecipe;
 import me.elvira.recipesapp.services.RecipesServices;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.io.PrintWriter;
 import java.util.*;
 
 @Service
@@ -30,10 +23,12 @@ public class RecipesServicesImpl implements RecipesServices {
 
     private final FilesServicesRecipe filesServicesRecipe;
     private static TreeMap<Integer, Recipe> recipes = new TreeMap<>();
+    private final ObjectMapper objectMapper;
     private static int recipeNumber = 0;
 
-    public RecipesServicesImpl(FilesServicesRecipe filesServicesRecipe) {
+    public RecipesServicesImpl(FilesServicesRecipe filesServicesRecipe, ObjectMapper objectMapper) {
         this.filesServicesRecipe = filesServicesRecipe;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -120,52 +115,29 @@ public class RecipesServicesImpl implements RecipesServices {
     }
 
     @Override
-    public Path createTextDataFile() throws IOException {
-        Path path = filesServicesRecipe.createTempFile("recipesDataFile");
-        for (Recipe recipe : recipes.values()) {
-            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
-                writer.append(recipe.getName()).append("\n \n").append("Время приготовления: ").append(String.valueOf(recipe.getCookingTime())).append(" minutes.").append("\n");
-                writer.append("\n");
-                writer.append("Ингредиенты: \n \n");
-                recipe.getIngredients().forEach(ingredient -> {
-                    try {
-                        writer.append(" • ").append(ingredient.getName()).append(" • ").append(String.valueOf(ingredient.getQuantity())).append(" ").append(ingredient.getUnit()).append("\n \n");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                writer.append("\n");
-                writer.append("Инструкция приготовления: \n \n");
-                recipe.getSteps().forEach(step -> {
-                    try {
-                        writer.append(" > ").append(step).append("\n \n");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                writer.append("\n \n");
-            }
+    public void expertFileTxt(PrintWriter writer) throws IOException {
+//        List<Recipe> recipeList = new ArrayList<>();
+//        objectMapper.writeValue(writer, this.recipes.values());
+        if (writer == null) {
+            throw new RecipeNotFoundException();
         }
-        return path;
-    }
-
-    @Override
-    public ResponseEntity<Object> downloadTextDataFile() {
-        try {
-            Path path = createTextDataFile();
-            if (Files.size(path) == 0) {
-                return ResponseEntity.noContent().build();
-            }
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
-            return ResponseEntity.ok()
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .contentLength(Files.size(path))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipesDataFile.txt\"")
-                    .body(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(e.toString());
+        if (StringUtils.isBlank(writer.toString())){
+            throw new RecipeValidationException();
         }
+        for (Recipe recipe : this.recipes.values()){
+            writer.println(recipe.getName());
+            writer.println("Время приготовления: %d минут.".formatted(recipe.getCookingTime()));
+            writer.println("Ингредиенты:");
+            for (Ingredient ingredient : recipe.getIngredients()){
+                writer.println("\t%s - %d %s".formatted(ingredient.getName(), ingredient.getQuantity(), ingredient.getUnit()));
+            }
+            writer.println("Инструкция приготовления:");
+            for (int i = 0; i < recipe.getSteps().size(); i++){
+                writer.println("%d. %s".formatted(i + 1, recipe.getSteps().get(i)));
+            }
+            writer.println();
+        }
+        writer.flush();
     }
 
 }
