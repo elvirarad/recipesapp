@@ -10,9 +10,14 @@ import me.elvira.recipesapp.model.Recipe;
 import me.elvira.recipesapp.services.FilesServicesRecipe;
 import me.elvira.recipesapp.services.RecipesServices;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -124,7 +129,7 @@ public class RecipesServicesImpl implements RecipesServices {
                 writer.append("Ингредиенты: \n \n");
                 recipe.getIngredients().forEach(ingredient -> {
                     try {
-                        writer.append(" - ").append(ingredient.getName()).append(" - ").append(String.valueOf(ingredient.getQuantity())).append(" ").append(ingredient.getUnit()).append("\n \n");
+                        writer.append(" • ").append(ingredient.getName()).append(" • ").append(String.valueOf(ingredient.getQuantity())).append(" ").append(ingredient.getUnit()).append("\n \n");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -144,5 +149,23 @@ public class RecipesServicesImpl implements RecipesServices {
         return path;
     }
 
+    @Override
+    public ResponseEntity<Object> downloadTextDataFile() {
+        try {
+            Path path = createTextDataFile();
+            if (Files.size(path) == 0) {
+                return ResponseEntity.noContent().build();
+            }
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipesDataFile.txt\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
+        }
+    }
 
 }

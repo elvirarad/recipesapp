@@ -2,6 +2,7 @@ package me.elvira.recipesapp.services;
 
 import me.elvira.recipesapp.dto.RecipeDTO;
 import me.elvira.recipesapp.model.Recipe;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,6 +25,8 @@ public interface RecipesServices {
     void readFromFile();
 
     Path createTextDataFile() throws IOException;
+
+    ResponseEntity<Object> downloadTextDataFile();
 
 
 //    Recipe editRecipe(int id, Recipe recipe);

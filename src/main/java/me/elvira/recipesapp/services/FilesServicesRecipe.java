@@ -24,7 +24,6 @@ public interface FilesServicesRecipe {
 
     boolean cleanDataFile();
 
-    ResponseEntity<Object> downloadTextDataFile();
 
     Path createTempFile(String suffix);
 }

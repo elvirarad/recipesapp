@@ -1,7 +1,6 @@
 package me.elvira.recipesapp.services.impl;
 
 import me.elvira.recipesapp.services.FilesServicesRecipe;
-import me.elvira.recipesapp.services.RecipesServices;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -15,21 +14,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-
 @Service
 public class FilesServicesRecipesImpl implements FilesServicesRecipe {
-
-    private final RecipesServices recipesServices;
 
     @Value("${path.to.files.folder}")
     private String recipesFilePath;
 
     @Value("recipes.json")
     private String recipesFileName;
-
-    public FilesServicesRecipesImpl(RecipesServices recipesServices) {
-        this.recipesServices = recipesServices;
-    }
 
     @Override
     public boolean saveToFile(String json){
@@ -90,7 +82,6 @@ public class FilesServicesRecipesImpl implements FilesServicesRecipe {
         }
     }
 
-
     @Override
     public boolean cleanDataFile(){
         try {
@@ -103,27 +94,6 @@ public class FilesServicesRecipesImpl implements FilesServicesRecipe {
             return false;
         }
     }
-
-    @Override
-    public ResponseEntity<Object> downloadTextDataFile() {
-        try {
-            Path path = recipesServices.createTextDataFile();
-            if (Files.size(path) == 0) {
-                return ResponseEntity.noContent().build();
-            }
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
-            return ResponseEntity.ok()
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .contentLength(Files.size(path))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipesDataFile.txt\"")
-                    .body(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(e.toString());
-        }
-    }
-
-
 
     @Override
     public Path createTempFile(String suffix) {
