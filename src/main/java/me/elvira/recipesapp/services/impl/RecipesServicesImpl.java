@@ -115,7 +115,7 @@ public class RecipesServicesImpl implements RecipesServices {
     }
 
     @Override
-    public void expertFileTxt(PrintWriter writer) throws IOException {
+    public void exportFileTxt(PrintWriter writer) throws IOException {
 //        List<Recipe> recipeList = new ArrayList<>();
 //        objectMapper.writeValue(writer, this.recipes.values());
         if (writer == null) {

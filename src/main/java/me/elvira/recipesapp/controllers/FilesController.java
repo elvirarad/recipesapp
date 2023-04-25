@@ -67,64 +67,7 @@ public class FilesController {
             summary = "Загрузка в файл рецептов из памяти",
             description = "Скачать в файл рецепты в формате .txt"
     )
-//    @ApiResponses(value = {
-//            @ApiResponse(
-//                    responseCode = "200",
-//                    description = "Файл успешно загружен",
-//                    content = {
-//                            @Content(
-//                                    mediaType = "application/text-plain",
-//                                    array = @ArraySchema(schema =
-//                                    @Schema(implementation = Recipe.class))
-//                            )
-//                    }
-//            ),
-//            @ApiResponse(
-//                    responseCode = "400",
-//                    description = "Ошибка параметров запроса",
-//                    content = {
-//                            @Content(
-//                                    mediaType = "application/text-plain",
-//                                    array = @ArraySchema(schema =
-//                                    @Schema(implementation = Recipe.class))
-//                            )
-//                    }
-//            ),
-//
-//            @ApiResponse(
-//                    responseCode = "404",
-//                    description = "Неверный URL или нет такой операции в веб-приложении",
-//                    content = {
-//                            @Content(
-//                                    mediaType = "application/text-plain",
-//                                    array = @ArraySchema(schema =
-//                                    @Schema(implementation = Recipe.class))
-//                            )
-//                    }
-//            ),
-//            @ApiResponse(
-//                    responseCode = "500",
-//                    description = "Внутренняя ошибка сервера во время запроса",
-//                    content = {
-//                            @Content(
-//                                    mediaType = "application/text-plain",
-//                                    array = @ArraySchema(schema =
-//                                    @Schema(implementation = Recipe.class))
-//                            )
-//                    }
-//            ),
-//            @ApiResponse(
-//                    responseCode = "204",
-//                    description = "В файле нет содержимого",
-//                    content = {
-//                            @Content(
-//                                    mediaType = "application/text-plain",
-//                                    array = @ArraySchema(schema =
-//                                    @Schema(implementation = Recipe.class))
-//                            )
-//                    }
-//            )
-//    })
+
     public void downloadRecipes(HttpServletResponse response) throws IOException {
         ContentDisposition disposition = ContentDisposition.attachment()
                 .name("recipes.txt")
@@ -132,7 +75,7 @@ public class FilesController {
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, disposition.toString());
         response.setContentType("text/plain");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        recipesServices.expertFileTxt(response.getWriter());
+        recipesServices.exportFileTxt(response.getWriter());
     }
 
 }

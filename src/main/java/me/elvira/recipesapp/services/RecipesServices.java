@@ -25,5 +25,5 @@ public interface RecipesServices {
 
     void readFromFile();
 
-    void expertFileTxt(PrintWriter writer) throws IOException;
+    void exportFileTxt(PrintWriter writer) throws IOException;
 }
