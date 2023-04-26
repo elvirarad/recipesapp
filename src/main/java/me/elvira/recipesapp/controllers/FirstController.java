@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @RestController
 @Tag(name = "Информация", description = "информация о приложении")
-public class InfoController {
+public class FirstController {
     @GetMapping("/")
     @Operation(summary = "приветствие")
     public String helloWord() {
