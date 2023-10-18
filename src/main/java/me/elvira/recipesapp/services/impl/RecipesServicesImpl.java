@@ -119,7 +119,7 @@ public class RecipesServicesImpl implements RecipesServices {
 //        List<Recipe> recipeList = new ArrayList<>();
 //        objectMapper.writeValue(writer, this.recipes.values());
         if (writer == null) {
-            throw new RecipeNotFoundException();
+            throw new IllegalArgumentException();
         }
         if (StringUtils.isBlank(writer.toString())){
             throw new RecipeValidationException();
